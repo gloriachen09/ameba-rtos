@@ -1,0 +1,27 @@
+name: Build Ameba Project
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  build-amebalite-project:
+    uses: ./.github/workflows/build_template_amebalite.yml
+    with:
+      module_name: AMEBALITE
+      artifacts_name: amebalite-project
+    secrets: inherit
+
+  build-amebasmart-project:
+    uses: ./.github/workflows/build_template_amebasmart.yml
+    with:
+      module_name: AMEBASMART
+      artifacts_name: amebasmart-project
+    secrets: inherit
+
+  build-amebadplus-project:
+    uses: ./.github/workflows/build_template_amebadplus.yml
+    with:
+      module_name: AMEBASMART
+      artifacts_name: amebasmart-project
+    secrets: inherit
