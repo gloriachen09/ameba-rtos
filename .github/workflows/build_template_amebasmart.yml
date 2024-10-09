@@ -1,1 +1,57 @@
 
+name: Reusable amebasmart workflow template
+
+on:
+  workflow_call:
+    # parameters from upstream workflow
+    inputs:
+      module_name:
+        required: true
+        type: string
+      artifacts_name:
+        required: true
+        type: string
+    # parameters from upstream inherit
+    secrets:
+      TOKEN_AMEBALITE:
+        required: false
+      TOKEN_AMEBASMART:
+        required: false
+      TOKEN_AMEBADPLUS:
+        required: false
+
+jobs:
+  build-template-amebasmart:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Configure prerequisites
+      run: |
+        # set config
+
+        if ${{ inputs.artifacts_name == 'amebasmart-B1' }}; then
+          ./tools/build_check/rtl_sdk_config.py --chip AMEBASMART --config BT1
+          ./tools/build_check/rtl_sdk_config.py --chip AMEBASMART --config IPC
+          ./tools/build_check/rtl_sdk_config.py --chip AMEBASMART --config AUDIO_MIXER
+          ./tools/build_check/rtl_sdk_config.py --chip AMEBASMART --config TRUSTZONE
+          ./tools/build_check/rtl_sdk_config.py --chip AMEBASMART --config USB_AP_DEVICE
+        fi
+
+    - name: Compile
+      run: |
+        cd amebasmart_gcc_project
+        make all
+        cd -
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifacts_name }}
+        path: |
+          amebasmart_gcc_project/menuconfig/.config
+          amebasmart_gcc_project/menuconfig/.config_kr4
+          amebasmart_gcc_project/menuconfig/.config_km4
+          amebasmart_gcc_project/project_km4/asdk/image
+          amebasmart_gcc_project/project_kr4/vsdk/image
