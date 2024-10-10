@@ -176,16 +176,16 @@ endif
 	@echo "========== Image manipulating start =========="
 
 	@# 32Bytes aligned for rsip #
-	$(Q) sh $(UTILITYDIR)/pad.sh $(IMAGE_TARGET_FOLDER)/xip_image2.bin 32
-	$(Q) sh $(UTILITYDIR)/pad.sh $(IMAGE_TARGET_FOLDER)/sram_2.bin 32
-	$(Q) sh $(UTILITYDIR)/pad.sh $(IMAGE_TARGET_FOLDER)/psram_2.bin 32
+	$(Q) $(PADTOOL) $(IMAGE_TARGET_FOLDER)/xip_image2.bin 32
+	$(Q) $(PADTOOL) $(IMAGE_TARGET_FOLDER)/sram_2.bin 32
+	$(Q) $(PADTOOL) $(IMAGE_TARGET_FOLDER)/psram_2.bin 32
 
 ifeq ($(CONFIG_MP_SHRINK), y)
 	$(Q)$(PREPENDTOOL) $(IMAGE_TARGET_FOLDER)/sram_2.bin  __img2_entry_start__  $(IMAGE_TARGET_FOLDER)/target_img2.map
 	$(Q)cat $(IMAGE_TARGET_FOLDER)/sram_2_prepend.bin > $(IMAGE_TARGET_FOLDER)/km0_image2_all_shrink.bin
-	#$(Q)sh $(UTILITYDIR)/pad.sh $(IMAGE_TARGET_FOLDER)/km0_image2_all_shrink.bin 1024
+	#$(Q)$(PADTOOL) $(IMAGE_TARGET_FOLDER)/km0_image2_all_shrink.bin 1024
 
-	$(Q)sh $(KM4_BUILDDIR)/asdk/gnu_utility/image_tool/imagetool.sh $(IMAGE_TARGET_FOLDER)/km0_image2_all_shrink.bin $(BUILD_TYPE)
+	$(Q)$(IMAGETOOL) $(IMAGE_TARGET_FOLDER)/km0_image2_all_shrink.bin $(BUILD_TYPE)
 
 else
 	$(Q)$(PREPENDTOOL) $(IMAGE_TARGET_FOLDER)/entry.bin  __img2_entry_start__  $(IMAGE_TARGET_FOLDER)/target_img2.map
@@ -196,9 +196,9 @@ else
 	@# pad to 4K-aligned for RSIP/MMU address 4K-alignment restriction
 	$(Q)cat $(IMAGE_TARGET_FOLDER)/xip_image2_prepend.bin $(IMAGE_TARGET_FOLDER)/sram_2_prepend.bin $(IMAGE_TARGET_FOLDER)/psram_2_prepend.bin \
 			$(IMAGE_TARGET_FOLDER)/entry_prepend.bin > $(IMAGE_TARGET_FOLDER)/km0_image2_all.bin
-	$(Q)sh $(UTILITYDIR)/pad.sh $(IMAGE_TARGET_FOLDER)/km0_image2_all.bin 4096
+	$(Q)$(PADTOOL) $(IMAGE_TARGET_FOLDER)/km0_image2_all.bin 4096
 
-	$(Q)sh $(KM4_BUILDDIR)/asdk/gnu_utility/image_tool/imagetool.sh $(IMAGE_TARGET_FOLDER)/km0_image2_all.bin $(BUILD_TYPE)
+	$(Q)$(IMAGETOOL) $(IMAGE_TARGET_FOLDER)/km0_image2_all.bin $(BUILD_TYPE)
 
 endif
 
@@ -206,8 +206,8 @@ ifeq ($(CONFIG_FATFS_WITHIN_APP_IMG), y)
 	@if [ -f $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/km0_km4_app.bin ] && [ -f $(BASEDIR)/amebadplus_gcc_project/fatfs.bin ]; then \
 		mv $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/km0_km4_app.bin $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/km0_km4_app_tmp.bin; \
 		mv $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/km0_km4_app_ns.bin $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/km0_km4_app_ns_tmp.bin; \
-		sh $(UTILITYDIR)/pad.sh $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/km0_km4_app_tmp.bin 4096; \
-		sh $(UTILITYDIR)/pad.sh $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/km0_km4_app_ns_tmp.bin 4096; \
+		$(PADTOOL) $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/km0_km4_app_tmp.bin 4096; \
+		$(PADTOOL) $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/km0_km4_app_ns_tmp.bin 4096; \
 		$(PREPENDTOOL) $(BASEDIR)/amebadplus_gcc_project/fatfs.bin  VFS1_FLASH_BASE_ADDR  $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/target_img2.map; \
 		cat $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/km0_km4_app_tmp.bin $(BASEDIR)/amebadplus_gcc_project/fatfs_prepend.bin > $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/km0_km4_app.bin; \
 		cat $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/km0_km4_app_ns_tmp.bin $(BASEDIR)/amebadplus_gcc_project/fatfs_prepend.bin > $(BASEDIR)/amebadplus_gcc_project/project_km4/asdk/image/km0_km4_app_ns.bin; \

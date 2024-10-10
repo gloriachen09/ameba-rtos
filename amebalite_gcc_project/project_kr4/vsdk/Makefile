@@ -175,13 +175,13 @@ ifeq ($(CONFIG_MP_SHRINK), y)
 	$(Q)$(PREPENDTOOL) $(IMAGE_TARGET_FOLDER)/sram_2.bin  __boot_text_start__  $(IMAGE_TARGET_FOLDER)/target_img2.map
 	$(Q)cat $(IMAGE_TARGET_FOLDER)/sram_2_prepend.bin > $(IMAGE_TARGET_FOLDER)/kr4_image2_all_shrink.bin
 
-	$(Q)sh $(KM4_BUILDDIR)/asdk/gnu_utility/image_tool/imagetool.sh $(IMAGE_TARGET_FOLDER)/kr4_image2_all_shrink.bin $(BUILD_TYPE) $(DSP_IMAGE_TARGET_DIR)
+	$(Q)$(IMAGETOOL) $(IMAGE_TARGET_FOLDER)/kr4_image2_all_shrink.bin $(BUILD_TYPE) $(DSP_IMAGE_TARGET_DIR)
 
 else
-	$(Q) sh $(UTILITYDIR)/pad16.sh $(IMAGE_TARGET_FOLDER)/sram_only.bin
-	$(Q) sh $(UTILITYDIR)/pad16.sh $(IMAGE_TARGET_FOLDER)/sram_2.bin
-	$(Q) sh $(UTILITYDIR)/pad16.sh $(IMAGE_TARGET_FOLDER)/psram_2.bin
-	$(Q) sh $(UTILITYDIR)/pad16.sh $(IMAGE_TARGET_FOLDER)/xip_image2.bin
+	$(Q) $(PAD16TOOL) $(IMAGE_TARGET_FOLDER)/sram_only.bin
+	$(Q) $(PAD16TOOL) $(IMAGE_TARGET_FOLDER)/sram_2.bin
+	$(Q) $(PAD16TOOL) $(IMAGE_TARGET_FOLDER)/psram_2.bin
+	$(Q) $(PAD16TOOL) $(IMAGE_TARGET_FOLDER)/xip_image2.bin
 
 	$(Q)$(PREPENDTOOL) $(IMAGE_TARGET_FOLDER)/boot.bin  __boot_text_start__  $(IMAGE_TARGET_FOLDER)/target_img2.map
 	$(Q)$(PREPENDTOOL) $(IMAGE_TARGET_FOLDER)/sram_only.bin __sram_only_start__  $(IMAGE_TARGET_FOLDER)/target_img2.map
@@ -194,17 +194,17 @@ else
 	@# pad to 4K-aligned for RSIP/MMU address 4K-alignment restriction
 	$(Q)cat $(IMAGE_TARGET_FOLDER)/xip_image2_prepend.bin $(IMAGE_TARGET_FOLDER)/psram_2_prepend.bin $(IMAGE_TARGET_FOLDER)/sram_2_prepend.bin \
 			$(IMAGE_TARGET_FOLDER)/boot_prepend.bin $(IMAGE_TARGET_FOLDER)/sram_only_prepend.bin > $(IMAGE_TARGET_FOLDER)/kr4_image2_all.bin
-	sh $(UTILITYDIR)/pad.sh $(IMAGE_TARGET_FOLDER)/kr4_image2_all.bin
+	$(PADTOOL) $(IMAGE_TARGET_FOLDER)/kr4_image2_all.bin
 
-	$(Q)sh $(KM4_BUILDDIR)/asdk/gnu_utility/image_tool/imagetool.sh $(IMAGE_TARGET_FOLDER)/kr4_image2_all.bin $(BUILD_TYPE) $(DSP_IMAGE_TARGET_DIR)
+	$(Q)$(IMAGETOOL) $(IMAGE_TARGET_FOLDER)/kr4_image2_all.bin $(BUILD_TYPE) $(DSP_IMAGE_TARGET_DIR)
 endif
 
 ifeq ($(CONFIG_FATFS_WITHIN_APP_IMG), y)
 	@if [ -f $(KM4_BUILDDIR)/asdk/image/kr4_km4_app.bin ] && [ -f $(BASEDIR)/amebalite_gcc_project/fatfs.bin ]; then \
 		mv $(KM4_BUILDDIR)/asdk/image/kr4_km4_app.bin $(KM4_BUILDDIR)/asdk/image/kr4_km4_app_tmp.bin; \
 		mv $(KM4_BUILDDIR)/asdk/image/kr4_km4_app_ns.bin $(KM4_BUILDDIR)/asdk/image/kr4_km4_app_ns_tmp.bin; \
-		sh $(UTILITYDIR)/pad.sh $(KM4_BUILDDIR)/asdk/image/kr4_km4_app_tmp.bin; \
-		sh $(UTILITYDIR)/pad.sh $(KM4_BUILDDIR)/asdk/image/kr4_km4_app_ns_tmp.bin; \
+		$(PADTOOL) $(KM4_BUILDDIR)/asdk/image/kr4_km4_app_tmp.bin; \
+		$(PADTOOL) $(KM4_BUILDDIR)/asdk/image/kr4_km4_app_ns_tmp.bin; \
 		$(PREPENDTOOL) $(BASEDIR)/amebalite_gcc_project/fatfs.bin  VFS1_FLASH_BASE_ADDR  $(AP_IMAGEDIR)/target_img2.map; \
 		cat $(KM4_BUILDDIR)/asdk/image/kr4_km4_app_tmp.bin $(BASEDIR)/amebalite_gcc_project/fatfs_prepend.bin > $(KM4_BUILDDIR)/asdk/image/kr4_km4_app.bin; \
 		cat $(KM4_BUILDDIR)/asdk/image/kr4_km4_app_ns_tmp.bin $(BASEDIR)/amebalite_gcc_project/fatfs_prepend.bin > $(KM4_BUILDDIR)/asdk/image/kr4_km4_app_ns.bin; \
@@ -212,8 +212,8 @@ ifeq ($(CONFIG_FATFS_WITHIN_APP_IMG), y)
 		if [ -f $(KM4_BUILDDIR)/asdk/image/kr4_km4_dsp_app.bin ] && [ -f $(BASEDIR)/amebalite_gcc_project/fatfs.bin ]; then \
 			mv $(KM4_BUILDDIR)/asdk/image/kr4_km4_dsp_app.bin $(KM4_BUILDDIR)/asdk/image/kr4_km4_dsp_app_tmp.bin; \
 			mv $(KM4_BUILDDIR)/asdk/image/kr4_km4_dsp_app_ns.bin $(KM4_BUILDDIR)/asdk/image/kr4_km4_dsp_app_ns_tmp.bin; \
-			sh $(UTILITYDIR)/pad.sh $(KM4_BUILDDIR)/asdk/image/kr4_km4_dsp_app_tmp.bin; \
-			sh $(UTILITYDIR)/pad.sh $(KM4_BUILDDIR)/asdk/image/kr4_km4_dsp_app_ns_tmp.bin; \
+			$(PADTOOL) $(KM4_BUILDDIR)/asdk/image/kr4_km4_dsp_app_tmp.bin; \
+			$(PADTOOL) $(KM4_BUILDDIR)/asdk/image/kr4_km4_dsp_app_ns_tmp.bin; \
 			$(PREPENDTOOL) $(BASEDIR)/amebalite_gcc_project/fatfs.bin  VFS1_FLASH_BASE_ADDR  $(AP_IMAGEDIR)/target_img2.map; \
 			cat$(KM4_BUILDDIR)/asdk/image/kr4_km4_dsp_app_tmp.bin $(BASEDIR)/amebalite_gcc_project/fatfs_prepend.bin > $(KM4_BUILDDIR)/asdk/image/kr4_km4_dsp_app.bin; \
 			cat$(KM4_BUILDDIR)/asdk/image/kr4_km4_dsp_app_ns_tmp.bin $(BASEDIR)/amebalite_gcc_project/fatfs_prepend.bin > $(KM4_BUILDDIR)/asdk/image/kr4_km4_dsp_app_ns.bin; \

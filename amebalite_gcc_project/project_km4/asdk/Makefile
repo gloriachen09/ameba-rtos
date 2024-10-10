@@ -196,15 +196,15 @@ ifeq ($(CONFIG_TRUSTZONE), y)
 	@echo "========== linker img3 secure end =========="
 
 	@echo "========== Image manipulating start =========="
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/pad16.sh $(IMAGE_TARGET_FOLDER)/ram_3_s.bin
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/pad16.sh $(IMAGE_TARGET_FOLDER)/ram_3_nsc.bin
+	$(Q)$(PAD16TOOL) $(IMAGE_TARGET_FOLDER)/ram_3_s.bin
+	$(Q)$(PAD16TOOL) $(IMAGE_TARGET_FOLDER)/ram_3_nsc.bin
 
 	$(Q)$(PREPENDTOOL) $(IMAGE_TARGET_FOLDER)/ram_3_s.bin  __ram_image3_text_start__  $(IMAGE_TARGET_FOLDER)/target_img3.map
 	$(Q)$(PREPENDTOOL) $(IMAGE_TARGET_FOLDER)/ram_3_nsc.bin  __ram_image3_nsc_start__  $(IMAGE_TARGET_FOLDER)/target_img3.map
 
 	$(Q)cat $(IMAGE_TARGET_FOLDER)/ram_3_s_prepend.bin $(IMAGE_TARGET_FOLDER)/ram_3_nsc_prepend.bin > $(IMAGE_TARGET_FOLDER)/km4_image3_all.bin
 
-	$(CONFIG_SHELL) $(UTILITYDIR)/image_tool/imagetool.sh $(IMAGE_TARGET_FOLDER)/km4_image3_all.bin $(BUILD_TYPE)
+	$(IMAGETOOL) $(IMAGE_TARGET_FOLDER)/km4_image3_all.bin $(BUILD_TYPE)
 	@echo "========== Image manipulating end =========="
 endif
 
@@ -273,21 +273,21 @@ endif
 
 	# 32Bytes aligned for rsip #
 ifeq ($(CONFIG_MP_SHRINK), y)
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/pad16.sh $(IMAGE_TARGET_FOLDER)/sram_2.bin
+	$(Q) $(PAD16TOOL) $(IMAGE_TARGET_FOLDER)/sram_2.bin
 	$(Q)$(PREPENDTOOL) $(IMAGE_TARGET_FOLDER)/sram_2.bin  __boot_text_start__  $(IMAGE_TARGET_FOLDER)/target_img2.map
 	$(Q)cat  $(IMAGE_TARGET_FOLDER)/sram_2_prepend.bin > $(IMAGE_TARGET_FOLDER)/km4_image2_all_shrink_raw.bin
 ifeq ($(CONFIG_AP_CORE_KM4), y)
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/binary_pading.sh $(IMAGE_TARGET_FOLDER)/km4_image2_all_shrink_raw.bin $(IMAGE_TARGET_FOLDER)/km4_image2_all_shrink.bin 120
+	$(Q)$(BINARY_PADING) $(IMAGE_TARGET_FOLDER)/km4_image2_all_shrink_raw.bin $(IMAGE_TARGET_FOLDER)/km4_image2_all_shrink.bin 120
 else
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/binary_pading.sh $(IMAGE_TARGET_FOLDER)/km4_image2_all_shrink_raw.bin $(IMAGE_TARGET_FOLDER)/km4_image2_all_shrink.bin 248
+	$(Q)$(BINARY_PADING) $(IMAGE_TARGET_FOLDER)/km4_image2_all_shrink_raw.bin $(IMAGE_TARGET_FOLDER)/km4_image2_all_shrink.bin 248
 endif
 
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/image_tool/imagetool.sh $(IMAGE_TARGET_FOLDER)/km4_image2_all_shrink.bin $(BUILD_TYPE) $(DSP_IMAGE_TARGET_DIR);
+	$(Q) $(IMAGETOOL) $(IMAGE_TARGET_FOLDER)/km4_image2_all_shrink.bin $(BUILD_TYPE) $(DSP_IMAGE_TARGET_DIR);
 else
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/pad16.sh $(IMAGE_TARGET_FOLDER)/sram_only.bin
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/pad16.sh $(IMAGE_TARGET_FOLDER)/sram_2.bin
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/pad16.sh $(IMAGE_TARGET_FOLDER)/psram_2.bin
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/pad16.sh $(IMAGE_TARGET_FOLDER)/xip_image2.bin
+	$(Q) $(PAD16TOOL) $(IMAGE_TARGET_FOLDER)/sram_only.bin
+	$(Q) $(PAD16TOOL) $(IMAGE_TARGET_FOLDER)/sram_2.bin
+	$(Q) $(PAD16TOOL) $(IMAGE_TARGET_FOLDER)/psram_2.bin
+	$(Q) $(PAD16TOOL) $(IMAGE_TARGET_FOLDER)/xip_image2.bin
 
 	$(Q)$(PREPENDTOOL) $(IMAGE_TARGET_FOLDER)/boot.bin  __boot_text_start__  $(IMAGE_TARGET_FOLDER)/target_img2.map
 	$(Q)$(PREPENDTOOL) $(IMAGE_TARGET_FOLDER)/sram_only.bin __sram_only_start__  $(IMAGE_TARGET_FOLDER)/target_img2.map
@@ -297,9 +297,9 @@ else
 
 	$(Q)cat $(IMAGE_TARGET_FOLDER)/xip_image2_prepend.bin $(IMAGE_TARGET_FOLDER)/psram_2_prepend.bin $(IMAGE_TARGET_FOLDER)/sram_2_prepend.bin $(IMAGE_TARGET_FOLDER)/boot_prepend.bin $(IMAGE_TARGET_FOLDER)/sram_only_prepend.bin > $(IMAGE_TARGET_FOLDER)/km4_image2_all.bin
 
-	@# $(Q) sh $(UTILITYDIR)/pad.sh $(IMAGE_TARGET_FOLDER)/km4_image2_all.bin
+	@# $(Q) $(PADTOOL) $(IMAGE_TARGET_FOLDER)/km4_image2_all.bin
 	
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/image_tool/imagetool.sh $(IMAGE_TARGET_FOLDER)/km4_image2_all.bin $(BUILD_TYPE) $(DSP_IMAGE_TARGET_DIR); \
+	$(Q) $(IMAGETOOL) $(IMAGE_TARGET_FOLDER)/km4_image2_all.bin $(BUILD_TYPE) $(DSP_IMAGE_TARGET_DIR); \
 
 endif
 
@@ -307,8 +307,8 @@ ifeq ($(CONFIG_FATFS_WITHIN_APP_IMG), y)
 	@if [ -f $(IMAGE_TARGET_FOLDER)/kr4_km4_app.bin ] && [ -f $(BASEDIR)/amebalite_gcc_project/fatfs.bin ]; then \
 		mv $(IMAGE_TARGET_FOLDER)/kr4_km4_app.bin $(IMAGE_TARGET_FOLDER)/kr4_km4_app_tmp.bin; \
 		mv $(IMAGE_TARGET_FOLDER)/kr4_km4_app_ns.bin $(IMAGE_TARGET_FOLDER)/kr4_km4_app_ns_tmp.bin; \
-		$(CONFIG_SHELL) $(UTILITYDIR)/pad.sh $(IMAGE_TARGET_FOLDER)/kr4_km4_app_tmp.bin; \
-		$(CONFIG_SHELL) $(UTILITYDIR)/pad.sh $(IMAGE_TARGET_FOLDER)/kr4_km4_app_ns_tmp.bin; \
+		$(PADTOOL) $(IMAGE_TARGET_FOLDER)/kr4_km4_app_tmp.bin; \
+		$(PADTOOL) $(IMAGE_TARGET_FOLDER)/kr4_km4_app_ns_tmp.bin; \
 		$(PREPENDTOOL) $(BASEDIR)/amebalite_gcc_project/fatfs.bin  VFS1_FLASH_BASE_ADDR  $(AP_IMAGEDIR)/target_img2.map; \
 		cat $(IMAGE_TARGET_FOLDER)/kr4_km4_app_tmp.bin $(BASEDIR)/amebalite_gcc_project/fatfs_prepend.bin > $(IMAGE_TARGET_FOLDER)/kr4_km4_app.bin; \
 		cat $(IMAGE_TARGET_FOLDER)/kr4_km4_app_ns_tmp.bin $(BASEDIR)/amebalite_gcc_project/fatfs_prepend.bin > $(IMAGE_TARGET_FOLDER)/kr4_km4_app_ns.bin; \
@@ -316,8 +316,8 @@ ifeq ($(CONFIG_FATFS_WITHIN_APP_IMG), y)
 		if [ -f $(IMAGE_TARGET_FOLDER)/kr4_km4_dsp_app.bin ] && [ -f $(BASEDIR)/amebalite_gcc_project/fatfs.bin ]; then \
 			mv $(IMAGE_TARGET_FOLDER)/kr4_km4_dsp_app.bin $(IMAGE_TARGET_FOLDER)/kr4_km4_dsp_app_tmp.bin; \
 			mv $(IMAGE_TARGET_FOLDER)/kr4_km4_dsp_app_ns.bin $(IMAGE_TARGET_FOLDER)/kr4_km4_dsp_app_ns_tmp.bin; \
-			$(CONFIG_SHELL) $(UTILITYDIR)/pad.sh $(IMAGE_TARGET_FOLDER)/kr4_km4_dsp_app_tmp.bin; \
-			$(CONFIG_SHELL) $(UTILITYDIR)/pad.sh $(IMAGE_TARGET_FOLDER)/kr4_km4_dsp_app_ns_tmp.bin; \
+			$(PADTOOL) $(IMAGE_TARGET_FOLDER)/kr4_km4_dsp_app_tmp.bin; \
+			$(PADTOOL) $(IMAGE_TARGET_FOLDER)/kr4_km4_dsp_app_ns_tmp.bin; \
 			$(PREPENDTOOL) $(BASEDIR)/amebalite_gcc_project/fatfs.bin  VFS1_FLASH_BASE_ADDR  $(AP_IMAGEDIR)/target_img2.map; \
 			cat $(IMAGE_TARGET_FOLDER)/kr4_km4_dsp_app_tmp.bin $(BASEDIR)/amebalite_gcc_project/fatfs_prepend.bin > $(IMAGE_TARGET_FOLDER)/kr4_km4_dsp_app.bin; \
 			cat $(IMAGE_TARGET_FOLDER)/kr4_km4_dsp_app_ns_tmp.bin $(BASEDIR)/amebalite_gcc_project/fatfs_prepend.bin > $(IMAGE_TARGET_FOLDER)/kr4_km4_dsp_app_ns.bin; \
@@ -404,10 +404,10 @@ endif
 	@echo "========== Image manipulating start =========="
 ifeq ($(CONFIG_MP_SHRINK), y)
 	##entry 1k for flashloader
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/pad.sh $(IMAGE_TARGET_FOLDER)/entry_1.bin 992
+	$(Q) $(PADTOOL) $(IMAGE_TARGET_FOLDER)/entry_1.bin 992
 endif
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/pad16.sh $(IMAGE_TARGET_FOLDER)/ram_1.bin
-	$(Q) $(CONFIG_SHELL) $(UTILITYDIR)/pad16.sh $(IMAGE_TARGET_FOLDER)/xip_boot.bin
+	$(Q) $(PAD16TOOL) $(IMAGE_TARGET_FOLDER)/ram_1.bin
+	$(Q) $(PAD16TOOL) $(IMAGE_TARGET_FOLDER)/xip_boot.bin
 
 ifeq ($(CONFIG_MP_SHRINK), y)
 	$(Q)$(PREPENDTOOL) $(IMAGE_TARGET_FOLDER)/entry_1.bin  __ram_start_table_start__  $(IMAGE_TARGET_FOLDER)/target_loader.map
@@ -415,16 +415,16 @@ ifeq ($(CONFIG_MP_SHRINK), y)
 
 	$(Q)cat $(IMAGE_TARGET_FOLDER)/entry_1_prepend.bin $(IMAGE_TARGET_FOLDER)/ram_1_prepend.bin > $(IMAGE_TARGET_FOLDER)/km4_boot_all.bin
 
-	$(CONFIG_SHELL) $(UTILITYDIR)/image_tool/imagetool.sh $(IMAGE_TARGET_FOLDER)/km4_boot_all.bin $(BUILD_TYPE); \
+	$(IMAGETOOL) $(IMAGE_TARGET_FOLDER)/km4_boot_all.bin $(BUILD_TYPE); \
 
 else
 	$(Q)$(PREPENDTOOL) $(IMAGE_TARGET_FOLDER)/ram_1.bin  __ram_start_table_start__  $(IMAGE_TARGET_FOLDER)/target_loader.map
 	@if [ ${IMGTOOL_LOADER} == "YES" ]; then \
-		$(CONFIG_SHELL) $(UTILITYDIR)/image_tool/imagetool.sh $(IMAGE_TARGET_FOLDER)/ram_1_prepend.bin $(BUILD_TYPE); \
+		$(IMAGETOOL) $(IMAGE_TARGET_FOLDER)/ram_1_prepend.bin $(BUILD_TYPE); \
 	else \
 		$(PREPENDTOOL) $(IMAGE_TARGET_FOLDER)/xip_boot.bin  __km4_boot_text_start__  $(IMAGE_TARGET_FOLDER)/target_loader.map; \
 		cat $(IMAGE_TARGET_FOLDER)/xip_boot_prepend.bin $(IMAGE_TARGET_FOLDER)/ram_1_prepend.bin > $(IMAGE_TARGET_FOLDER)/km4_boot_all.bin; \
-		$(CONFIG_SHELL) $(UTILITYDIR)/image_tool/imagetool.sh $(IMAGE_TARGET_FOLDER)/km4_boot_all.bin $(BUILD_TYPE); \
+		$(IMAGETOOL) $(IMAGE_TARGET_FOLDER)/km4_boot_all.bin $(BUILD_TYPE); \
 	fi
 
 endif
@@ -608,7 +608,7 @@ gen_imgtool_floader:
 		echo Error: No imgtool_flashloader.bin in $(FLOADER_BIN_DIR); exit 1;\
 	fi
 	$(Q)head -zc -4096 $(FLOADER_BIN_DIR)/imgtool_flashloader.bin > $(IMAGE_TARGET_FOLDER)/ram_1_prepend.bin
-	$(Q)$(CONFIG_SHELL) $(UTILITYDIR)/image_tool/imagetool.sh $(IMAGE_TARGET_FOLDER)/ram_1_prepend.bin $(BUILD_TYPE);
+	$(Q)$(IMAGETOOL) $(IMAGE_TARGET_FOLDER)/ram_1_prepend.bin $(BUILD_TYPE);
 ifneq ($(RTLNAME),)
 	$(Q)$(COPY) $(IMAGE_TARGET_FOLDER)/imgtool_flashloader.bin 	$(FLOADER_BIN_DIR)/floader_$(RTLNAME).bin -f;
 else

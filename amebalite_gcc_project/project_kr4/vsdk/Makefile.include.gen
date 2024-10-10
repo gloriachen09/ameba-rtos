@@ -49,8 +49,11 @@ CMSISMATHLIBDIR  = $(BASEDIR)/component/soc/8711b/fwlib/test/ft_test/cmsis_math
 
 PHERIEXAMPLE	= $(ROOTDIR)/../example/demo_peripheral
 # -----------------------------------------------------------------------------
-PREPENDTOOL		= sh $(UTILITYDIR)/prepend_header.sh
-OTAPREPENDTOOL  = $(UTILITYDIR)/prepend_ota_header.sh
+PREPENDTOOL		= $(CONFIG_SHELL) $(UTILITYDIR)/prepend_header.sh
+OTAPREPENDTOOL  = $(CONFIG_SHELL) $(UTILITYDIR)/prepend_ota_header.sh
+PAD16TOOL = $(CONFIG_SHELL) $(UTILITYDIR)/pad16.sh
+PADTOOL = $(CONFIG_SHELL) $(UTILITYDIR)/pad.sh
+IMAGETOOL = $(CONFIG_SHELL) $(KM4_BUILDDIR)/asdk/gnu_utility/image_tool/imagetool.sh
 COMPRESSTOOL = python $(KM4_BUILDDIR)/asdk/gnu_utility/compresstool.py
 LXDIALOG_CYGWIN_STATIC 	= $(UTILITYDIR)/lxdialog_prebuilt/lxdialog_cygwin_x86_static.exe
 COMPILEOS		= $(shell uname -o)
