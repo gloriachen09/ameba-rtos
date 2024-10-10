@@ -81,6 +81,7 @@ void atio_uart_out_dma(char *buf, int len)
 
 	if (!ret) {
 		printf("%s Error(%d)\n", __FUNCTION__, ret);
+		printf("%s Error(%d)\n", __FUNCTION__, ret);
 		dma_tx_busy = 0;
 	}
 }
