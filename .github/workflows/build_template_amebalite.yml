@@ -28,6 +28,7 @@ jobs:
       with:
         python-version: '3.11'
     - name: Configure prerequisites
+      shell: bash
       run: |
         # set config
 
@@ -70,6 +71,7 @@ jobs:
         fi
 
     - name: Compile
+      shell: bash
       run: |
         cd amebalite_gcc_project
         make all
