@@ -73,6 +73,7 @@ static void print_wifi_setting(unsigned char wlan_idx, rtw_wifi_setting_t *pSett
 
 	at_printf("WLAN%d Setting:\r\n", wlan_idx);
 	at_printf("==============================\r\n");
+	at_printf("==============================111\r\n");
 
 	switch (pSetting->mode) {
 	case RTW_MODE_AP:
