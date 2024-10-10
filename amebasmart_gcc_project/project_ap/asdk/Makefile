@@ -390,7 +390,7 @@ endif
 
 	@rm -f $(IMAGE_TARGET_FOLDER)/*prepend.bin
 	@$(COPY) $(IMAGE_TARGET_FOLDER)/*rom* $(ROM_LIB_DIR)
-	@$(COPY) ./build/atf/bl1/{*.dump,*.elf,*.ld,*.map} $(ROM_LIB_DIR)
+	@$(COPY) $(ROOTDIR)/build/atf/bl1/{*.dump,*.elf,*.ld,*.map} $(ROM_LIB_DIR)
 
 	@echo "========== Image manipulating end =========="
 
