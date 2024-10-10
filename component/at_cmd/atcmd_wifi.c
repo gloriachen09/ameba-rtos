@@ -1674,7 +1674,7 @@ void print_wifi_at(void)
 	for (index = 0; index < cmd_len; index++) {
 		at_printf("AT%s\r\n", at_wifi_items[index].log_cmd);
 	}
-	at_printf("test\n");
+	at_printf("test2\n");
 }
 
 void at_wifi_init(void)
