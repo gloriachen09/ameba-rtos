@@ -206,5 +206,6 @@ void atio_uart_init(void)
 
 	out_buffer = atio_uart_output;
 	at_printf("%s @%dbps\n", __FUNCTION__, UART_BAUD);
+	at_printf("%s @%dbps\n", __FUNCTION__, UART_BAUD);
 }
 
