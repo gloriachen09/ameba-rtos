@@ -12,7 +12,7 @@ on:
         type: string
     # parameters from upstream inherit
     secrets:
-      TOKEN_AMEBADPLUS:
+      TOKEN_AMEBALITE:
         required: false
       TOKEN_AMEBASMART:
         required: false

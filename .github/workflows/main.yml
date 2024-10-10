@@ -2,7 +2,8 @@ name: Build Ameba Project
 
 on:
   pull_request:
-    branches: [master]
+    branches:
+      - master
 
 jobs:
   build-amebalite-project-B1:
