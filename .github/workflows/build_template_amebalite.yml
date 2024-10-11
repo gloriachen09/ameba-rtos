@@ -27,8 +27,12 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-    - name: Configure prerequisites
+    - name: Configure bash
+      run: |
+        shell_cmd="bash"
+        echo "Shell is now $shell_cmd"
       shell: bash
+    - name: Configure prerequisites
       run: |
         # set config
 
@@ -71,7 +75,6 @@ jobs:
         fi
 
     - name: Compile
-      shell: bash
       run: |
         cd amebalite_gcc_project
         make all
