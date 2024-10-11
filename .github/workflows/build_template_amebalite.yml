@@ -73,12 +73,13 @@ jobs:
           ./tools/build_check/rtl_sdk_config.py --chip AMEBALITE --config MP_NORMAL
           ./tools/build_check/rtl_sdk_config.py --chip AMEBALITE --config BT_EN
         fi
-
+      shell: bash
     - name: Compile
       run: |
         cd amebalite_gcc_project
         make all
         cd -
+      shell: bash
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
