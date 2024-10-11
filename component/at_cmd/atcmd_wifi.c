@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-
+qqq
 #include "platform_autoconf.h"
 #include "os_wrapper.h"
 #include "atcmd_service.h"
