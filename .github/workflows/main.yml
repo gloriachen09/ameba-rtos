@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Disable Merge
-        if: github.event.pull_request.user.login == 'your_username'
         run: |
           curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -d '{"state": "pending", "description": "Merge is disabled until checks pass or this PR is approved.", "context": "merge-blocker"}' \
