@@ -29,7 +29,7 @@ jobs:
         python-version: '3.11'
     - name: Configure bash
       run: |
-        ln -sf /bin/bash /bin/sh
+        sudo ln -sf /bin/bash /bin/sh
   
     - name: Configure prerequisites
       shell: bash
