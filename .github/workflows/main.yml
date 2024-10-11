@@ -6,6 +6,17 @@ on:
       - master
 
 jobs:
+  disable_merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Disable Merge
+        if: github.event.pull_request.user.login == 'your_username'
+        run: |
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d '{"state": "pending", "description": "Merge is disabled until checks pass or this PR is approved.", "context": "merge-blocker"}' \
+            https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   build-amebalite-project-B1:
     uses: ./.github/workflows/build_template_amebalite.yml
     with:
