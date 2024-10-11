@@ -83,6 +83,7 @@ void atio_uart_out_dma(char *buf, int len)
 
 	if (!ret) {
 		RTK_LOGI(NOTAG, "%s Error(%d)\n", __FUNCTION__, ret);
+		RTK_LOGI(NOTAG, "%s Error(%d)\n", __FUNCTION__, ret);
 		dma_tx_busy = 0;
 	}
 }
