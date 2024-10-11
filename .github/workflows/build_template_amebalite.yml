@@ -24,6 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        path: work_directory
     - uses: actions/setup-python@v5
       with:
         python-version: '3.11'
@@ -33,6 +35,7 @@ jobs:
   
     - name: Configure prerequisites
       run: |
+        cd work_directory/ameba-rtos
         # set config
 
         if ${{ inputs.artifacts_name == 'amebalite-B1' }}; then
@@ -75,9 +78,9 @@ jobs:
 
     - name: Compile
       run: |
-        cd amebalite_gcc_project
+        cd work_directory/ameba-rtos/amebalite_gcc_project
         make all
-        cd -
+        cd work_directory/ameba-rtos
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
