@@ -487,6 +487,7 @@ define check_toolchain_version_func
 		echo "Toolchain Version Matched"; \
 	else \
 		echo "$(CURRENTVER)"; \
+		echo "$(shell which python)"; \
 		echo "Warning: Current Toolchain Version Mismatched!"; \
 		echo "Warning: Please delete current toolchain /asdk-$(ASDK_VER) in $(TOOLCHAINDIR) and redo make. The Latest ToolChain $(TOOLCHAINNAME) will be installed automatically during the project building"; \
 		exit 1; \
