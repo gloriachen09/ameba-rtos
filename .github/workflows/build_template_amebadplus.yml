@@ -35,25 +35,29 @@ jobs:
       run: |
         # set config
 
+        cd amebadplus_gcc_project
+
         if ${{ inputs.artifacts_name == 'amebadplus-B1' }}; then
-          ./amebadplus_gcc_project/menuconfig.py -f menuconfig/confs_daily_build/bt1.conf menuconfig/confs_daily_build/audio_passthrough.conf
+          ./menuconfig.py -f menuconfig/confs_daily_build/bt1.conf menuconfig/confs_daily_build/audio_passthrough.conf
         fi
 
         if ${{ inputs.artifacts_name == 'amebadplus-B2' }}; then
-          ./amebadplus_gcc_project/menuconfig.py -f menuconfig/confs_daily_build/high_tp.conf menuconfig/confs_daily_build/wps.conf
+          ./menuconfig.py -f menuconfig/confs_daily_build/high_tp.conf menuconfig/confs_daily_build/wps.conf
         fi
 
         if ${{ inputs.artifacts_name == 'amebadplus-B3' }}; then
-          ./amebadplus_gcc_project/menuconfig.py -f menuconfig/confs_daily_build/bt2.conf menuconfig/confs_daily_build/usb.conf
+          ./menuconfig.py -f menuconfig/confs_daily_build/bt2.conf menuconfig/confs_daily_build/usb.conf
         fi
 
         if ${{ inputs.artifacts_name == 'amebadplus-B5' }}; then
-          ./amebadplus_gcc_project/menuconfig.py -f menuconfig/confs_daily_build/bt_en.conf menuconfig/confs_daily_build/mp_shrink.conf
+          ./menuconfig.py -f menuconfig/confs_daily_build/bt_en.conf menuconfig/confs_daily_build/mp_shrink.conf
         fi
 
         if ${{ inputs.artifacts_name == 'amebadplus-B6' }}; then
-          ./amebadplus_gcc_project/menuconfig.py -f menuconfig/confs_daily_build/bt_en.conf menuconfig/confs_daily_build/mp_expand.conf
+          ./menuconfig.py -f menuconfig/confs_daily_build/bt_en.conf menuconfig/confs_daily_build/mp_expand.conf
         fi
+
+        cd -
 
     - name: Compile
       run: |
