@@ -482,11 +482,13 @@ define download_toolchain_func
 endef
 
 CURRENTVER = $(shell $(CC) --version)
+CURRENTVER2 = `$(CC) --version)`
 define check_toolchain_version_func
 	@if [ $(findstring $(TOOLCHAINVER), $(CURRENTVER)) ]; then \
 		echo "Toolchain Version Matched"; \
 	else \
 		echo "$(CURRENTVER)"; \
+		echo "$(CURRENTVER2)"; \
 		echo "Warning: Current Toolchain Version Mismatched!"; \
 		echo "Warning: Please delete current toolchain /asdk-$(ASDK_VER) in $(TOOLCHAINDIR) and redo make. The Latest ToolChain $(TOOLCHAINNAME) will be installed automatically during the project building"; \
 		exit 1; \
