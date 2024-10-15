@@ -481,7 +481,7 @@ define download_toolchain_func
 	fi
 endef
 
-CURRENTVER = $(shell $(CC) --version)
+CURRENTVER := $(shell $(CC) --version)
 define check_toolchain_version_func
 	@if [ $(findstring $(TOOLCHAINVER), $(CURRENTVER)) ]; then \
 		echo "Toolchain Version Matched"; \
