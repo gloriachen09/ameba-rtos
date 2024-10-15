@@ -32,9 +32,8 @@ jobs:
         sudo ln -sf /bin/bash /bin/sh
 
     - name: Use updated PATH
-      env:
-        TOOLCHAIN_PATH: /opt/rtk-toolchain/asdk-10.3.1/linux/newlib/bin
       run: |
+        echo "export PATH=\$PATH:/opt/rtk-toolchain/asdk-10.3.1/linux/newlib/bin"
         echo $PATH
   
     - name: Configure prerequisites
