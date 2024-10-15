@@ -30,6 +30,12 @@ jobs:
     - name: Configure bash
       run: |
         sudo ln -sf /bin/bash /bin/sh
+
+    - name: Use updated PATH
+      env:
+        PATH: /opt/rtk-toolchain/asdk-10.3.1/linux/newlib/bin/:$PATH
+      run: |
+        echo $PATH
   
     - name: Configure prerequisites
       run: |
