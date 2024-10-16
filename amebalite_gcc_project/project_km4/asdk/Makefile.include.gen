@@ -483,14 +483,15 @@ endef
 
 CURRENTVER = $(shell $(CC) --version)
 define check_toolchain_version_func
-	@if [ $(findstring $(TOOLCHAINVER), $(CURRENTVER)) ]; then \
-		echo "Toolchain Version Matched"; \
-	else \
-		echo "$(CURRENTVER)"; \
-		echo "Warning: Current Toolchain Version Mismatched!"; \
-		echo "Warning: Please delete current toolchain /asdk-$(ASDK_VER) in $(TOOLCHAINDIR) and redo make. The Latest ToolChain $(TOOLCHAINNAME) will be installed automatically during the project building"; \
-		exit 1; \
-	fi
+    @echo "Checking for gcc >= $(TOOLCHAINVER)..."
+    @if $(CC) --version | grep -q '$(TOOLCHAINVER)'; \
+    then \
+        echo "gcc is OK."; \
+    else \
+        echo "Error: gcc version must be $(TOOLCHAINVER) or newer."; \
+        echo "Install gcc $(TOOLCHAINVER) or newer or disable this check with 'make NOCHKGCC=1'."; \
+        exit 1; \
+    fi
 endef
 check_toolchain:
 	$(call download_toolchain_func,$(TOOLCHAINURL))
