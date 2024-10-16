@@ -30,6 +30,10 @@ jobs:
     - name: Configure bash
       run: |
         sudo ln -sf /bin/bash /bin/sh
+    
+    - name: Install cmake environment variables
+      run: |
+        sudo apt-get install cmake ninja-build
 
     - name: Configure prerequisites
       run: |
