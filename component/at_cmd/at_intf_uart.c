@@ -37,6 +37,7 @@ const u8 UART_RX_FID[MAX_UART_INDEX] = {
 static u32 uart_get_idx(UART_TypeDef *Uartx)
 {
 	u32 i;
+	printf("eeee");
 
 	for (i = 0; i < MAX_UART_INDEX; i++) {
 		if (Uartx == UART_DEV_TABLE[i].UARTx) {
