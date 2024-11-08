@@ -124,3 +124,20 @@ jobs:
       module_name: AMEBADPLUS
       artifacts_name: amebadplus-B6
     secrets: inherit
+
+  commit-msg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Validate commit message
+        run: |
+          if [ git log -1 --pretty=%B | grep "Change-Id:" ]]; then
+          else
+            echo "Invalid commit message!!"
+            echo "git log -1 --pretty=%B"
+            exit 1
+          fi
