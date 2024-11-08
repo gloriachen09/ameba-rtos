@@ -13,14 +13,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
+      - name: Get Commit Messages
+        id: get_commits
+        uses: josefpinegar/github-commit-messages@v1.0.0
 
       - name: Validate commit message
+        if: ${{ steps.get_commits.outputs.messages != '' }}
         run: |
-          if echo "$(git log -1 --pretty=%B)" | grep "Change-Id:"; then
-            echo "$(git log -1 --pretty=%B)"
+          echo "Commit messages:"
+          echo "${{ steps.get_commits.outputs.messages }}"
+          if echo "${{ steps.get_commits.outputs.messages }}" | grep "Change-Id:"; then
             echo "Valid commit message"
           else
-            echo "$(git log -1 --pretty=%B)"
             echo "Invalid commit message!!"
             exit 1
           fi
