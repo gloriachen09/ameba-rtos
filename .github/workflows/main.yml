@@ -135,10 +135,10 @@ jobs:
 
       - name: Validate commit message
         run: |
-          if [ git log -1 --pretty=%B | grep "Change-Id:" ]; then
+          if echo "$(git log -1 --pretty=%B)" | grep "Change-Id:"; then
             echo "Valid commit message"
           else
             echo "Invalid commit message!!"
-            echo "git log -1 --pretty=%B"
+            echo "$(git log -1 --pretty=%B)"
             exit 1
           fi

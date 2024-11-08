@@ -1,1 +1,1 @@
-#define SDK_VER "sdk_ver_20241108_I4243d45f8f8d6c55ff086173c82a7bbfa6ac0244
+#define SDK_VER "sdk_ver_20241108_I06a9d2164dfac0d2a62899b0ec14b02d4f1bf162
