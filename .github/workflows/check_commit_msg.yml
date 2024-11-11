@@ -12,19 +12,21 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
-      - name: Get Commit Messages
-        id: get_commits
-        uses: josefpinegar/github-commit-messages@v1.0.0
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Validate commit message
-        if: ${{ steps.get_commits.outputs.messages != '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Commit messages:"
-          echo "${{ steps.get_commits.outputs.messages }}"
-          if echo "${{ steps.get_commits.outputs.messages }}" | grep "Change-Id:"; then
+          pr_number=$(jq -r .number "$GITHUB_EVENT_PATH")
+          commit_messages=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$pr_number/commits" --jq '.[] | .commit.message')
+          echo "Commit Messages:"
+          echo "$commit_messages"
+
+          if echo "$commit_messages" | grep -q "Change-Id:"; then
             echo "Valid commit message"
           else
             echo "Invalid commit message!!"
+            echo "Please sun setup.sh under the sdk directory"
             exit 1
           fi
