@@ -1,0 +1,32 @@
+name: Validate Commit Message
+
+on:
+  pull_request:
+    branches:
+      - release/v1.0
+
+jobs:
+  check-commit-msg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Validate commit message
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number=$(jq -r .number "$GITHUB_EVENT_PATH")
+          commit_messages=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$pr_number/commits" --jq '.[] | .commit.message')
+          echo "Commit Messages:"
+          echo "$commit_messages"
+
+          if echo "$commit_messages" | grep -q "Change-Id:"; then
+            echo "Valid commit message"
+          else
+            echo "Invalid commit message!!"
+            echo "Please sun setup.sh under the sdk directory"
+            exit 1
+          fi
