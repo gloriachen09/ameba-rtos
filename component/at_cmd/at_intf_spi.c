@@ -12,7 +12,7 @@
 #include "at_intf_spi.h"
 #include "ringbuffer.h"
 
-static const char *const TAG = "AT_SPI-S";
+static const char *const TAG = "AT_SPI-S1";
 
 #define DataFrameSize	8
 #define Mode			0
