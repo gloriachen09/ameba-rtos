@@ -73,7 +73,7 @@ jobs:
         echo "ic ${{ inputs.ic_name }} "
         echo "ic ${{ inputs.build_stage_name }} "
         echo "ic ${{ github.event.inputs.build_stage_name }} "
-        BUILD_CONFIG=$(jq -r --arg ic "${{ inputs.ic_name }}" --arg stage "${{ inputs.build_stage_name }}" '.[$ic][$stage]' $JSON_FILE)
+        BUILD_CONFIG=$(jq -r --arg ic "${{ inputs.ic_name }}" --arg stage "${{ inputs.build_stage_name }}" '.[$ic][$stage][]' $JSON_FILE)
         echo "build_config=$BUILD_CONFIG" >> $GITHUB_OUTPUT
 
     - name: Menuconfig   
