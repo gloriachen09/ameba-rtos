@@ -94,7 +94,20 @@ jobs:
         else
           python build.py
         fi
-      if: ${{ inputs.ic_name != 'amebasmart' && matrix.shell != 'windows-latest' }}
+      if: ${{ matrix.os != 'windows-latest' }}
+
+    - name: Build_windows
+      run: |
+          echo "Build Current shell is ${{ matrix.shell }}"
+          cd ${{ inputs.ic_name }}_gcc_project
+          if "${{ inputs.build_stage_name }}" == "B3" (
+            python build.py -D USE_ALIYUN_URL=True
+          ) else if "${{ inputs.build_stage_name }}" == "B5" (
+            python build.py -D USE_ALIYUN_URL=True
+          ) else (
+            python build.py
+          )
+      if: ${{ inputs.ic_name != 'amebasmart' && matrix.os == 'windows-latest' }}
 
     - name: Post-Build Cleanup
       run: |
