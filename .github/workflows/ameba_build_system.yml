@@ -2,7 +2,8 @@ name: Unified Ameba RTOS Build System
 
 on:
   pull_request:
-    branches: [ master ]
+    branches:
+      - '*_sync_*'
 
 jobs:
   multi-platform-builds: 
