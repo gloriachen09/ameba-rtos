@@ -10,7 +10,7 @@
 #include "atcmd_service.h"
 #include "at_intf_spi.h"
 
-static const char *const TAG = "AT_SPI-S";
+static const char *const TAG = "AT_SPIQ-S";
 
 #define SPI_DATA_FRAME_SIZE	8
 #define SPI_MODE			0
