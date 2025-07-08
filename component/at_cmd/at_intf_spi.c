@@ -9,7 +9,7 @@
 #include "gpio_irq_api.h"
 #include "atcmd_service.h"
 
-static const char *const TAG = "AT_SPI-S";
+static const char *const TAG = "AT_SPI-Sqq";
 
 #define SPI_DATA_FRAME_SIZE	8
 #define SPI_MODE			0
