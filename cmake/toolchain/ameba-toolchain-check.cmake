@@ -74,24 +74,6 @@ else()
 endif()
 
 #execute_process runs commands while CMake is configuring the project, prior to build system generation
-execute_process(
-  COMMAND ${CMAKE_C_COMPILER} --version
-  RESULT_VARIABLE ret
-  OUTPUT_VARIABLE stdoutput
-)
-if(ret)
-	message(SEND_ERROR "Executing the below command failed. Please check toolchain path and permission.
-	${CMAKE_C_COMPILER} --version
-	${stdoutput}"
-	)
-else()
-	string(FIND "${stdoutput}" "${ToolChainVerMinor}" ISMATCH)
-	if(ISMATCH GREATER_EQUAL 0)
-		message("Toolchain Version Matched")
-	else()
-		message(SEND_ERROR "Current Toolchain Version Mismatched! Please delete current toolchain /${ToolChainVerMajor} in ${TOOLCHAINDIR} and rebuild. The Latest ToolChain ${TOOLCHAINNAME} will be installed automatically during the project building")
-	endif()
-endif()
 
 #CHECK git
 find_package(Git)
