@@ -12,7 +12,7 @@
 #include "at_intf_sdio.h"
 #include "atcmd_service.h"
 
-static const char *const TAG = "AT_SDIO-D";
+static const char *const TAG = "AT_SDIO-Da";
 
 #define SDIO_TX_BD_NUM	4	//n*2, 2 bd for one transaction
 #define SDIO_RX_BD_NUM	10
