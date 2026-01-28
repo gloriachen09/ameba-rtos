@@ -95,12 +95,6 @@ jobs:
             ' "$JSON_FILE"
         )
 
-        # 结果校验
-        if [ -z "$BUILD_CONFIG" ]; then
-          echo "未找到有效配置：ic=${{ inputs.ic_name }}, stage=${{ inputs.build_stage_name }}，或该键值不是字符串" >&2
-          exit 1
-        fi
-
         echo "build_config=$BUILD_CONFIG" >> $GITHUB_OUTPUT
         echo "SOC_NAME=${{ fromJson(env.SOC_MAP_JSON)[inputs.ic_name] }}" >> $GITHUB_ENV
 
