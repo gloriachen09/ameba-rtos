@@ -6,9 +6,6 @@ on:
       ic_name:
         required: true
         type: string
-      soc_name:
-        required: true
-        type: string
       build_stage_name:
         required: true
         type: string
