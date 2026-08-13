@@ -1,4 +1,4 @@
-PREBUILTS_VERSION=1.0.4
+PREBUILTS_VERSION=1.0.3
 PREBUILTS_WIN_URL='https://github.com/Ameba-AIoT/ameba-toolchain/releases/download/prebuilts-v1.0.3/prebuilts-win-1.0.3.zip'
 PREBUILTS_LINUX_URL='https://github.com/Ameba-AIoT/ameba-toolchain/releases/download/prebuilts-v1.0.3/prebuilts-linux-1.0.3.tar.gz'
 PREBUILTS_DARWIN_URL='https://github.com/Ameba-AIoT/ameba-toolchain/releases/download/prebuilts-v1.0.3/prebuilts-darwin-1.0.3.tar.gz'
