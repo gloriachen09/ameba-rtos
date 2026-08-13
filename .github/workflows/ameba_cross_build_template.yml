@@ -28,8 +28,8 @@ jobs:
           - os: windows-latest
             shell: powershell
 
-          - os: macos-latest
-            shell: bash
+          # - os: macos-latest
+          #   shell: bash
 
 #          - os: windows-latest
 #            shell: bash
@@ -38,22 +38,33 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Platform prepare and setup
+    - name: Platform prepare and setup (Unix)
+      if: ${{ matrix.os != 'windows-latest' }}
       shell: bash
       run: |
-        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-          sudo apt-get update -qq
-          sudo apt-get install -y cmake ninja-build jq
-          sudo ln -sf /bin/bash /bin/sh
-        elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          brew update
-          brew install cmake ninja jq wget
-        else
-          choco install cmake ninja wget jq -y --no-progress
-        fi
+        export USE_SECOND_SOURCE=True
+        echo "USE_SECOND_SOURCE=True" >> "$GITHUB_ENV"
+        source env.sh
+        echo "${GITHUB_WORKSPACE}/.venv/bin" >> "$GITHUB_PATH"
+        echo "VIRTUAL_ENV=${GITHUB_WORKSPACE}/.venv" >> "$GITHUB_ENV"
+        echo "${PREBUILTS_DIR}/bin" >> "$GITHUB_PATH"
+        echo "${PREBUILTS_DIR}/cmake/bin" >> "$GITHUB_PATH"
 
-        python -m pip install --upgrade pip
-        pip install -r tools/requirements.txt
+    - name: Platform prepare and setup (Windows)
+      if: ${{ matrix.os == 'windows-latest' }}
+      shell: cmd
+      run: |
+        set USE_SECOND_SOURCE=True
+        call env.bat
+        echo %GITHUB_WORKSPACE%\.venv\Scripts>>%GITHUB_PATH%
+        echo VIRTUAL_ENV=%GITHUB_WORKSPACE%\.venv>>%GITHUB_ENV%
+        echo USE_SECOND_SOURCE=True>>%GITHUB_ENV%
+        echo %PREBUILTS_DIR%\bin>>%GITHUB_PATH%
+        echo %PREBUILTS_DIR%\cmake\bin>>%GITHUB_PATH%
+        echo %PREBUILTS_DIR%\python3>>%GITHUB_PATH%
+        echo %PREBUILTS_DIR%\python3\Scripts>>%GITHUB_PATH%
+        echo %PREBUILTS_DIR%\make>>%GITHUB_PATH%
+        echo %PREBUILTS_DIR%\winpty>>%GITHUB_PATH%
 
     - name: Json file parser
       id: build_config
@@ -110,18 +121,18 @@ jobs:
       id: build_unix
       run: |
         echo "Build Current shell is ${{ matrix.shell }}"
-        python ameba.py build ${{ env.SOC_NAME }} -D USE_SECOND_SOURCE=True
+        python ameba.py build ${{ env.SOC_NAME }}
       if: ${{ matrix.os != 'windows-latest' }}
 
     - name: Build_windows
       id: build_win
       run: |
           echo "Build Current shell is ${{ matrix.shell }}"
-          python ameba.py build ${{ env.SOC_NAME }} -D USE_SECOND_SOURCE=True
+          python ameba.py build ${{ env.SOC_NAME }}
       if: ${{ inputs.ic_name != 'amebasmart' && matrix.os == 'windows-latest' }}
 
     - name: Post-Build Cleanup
       run: |
         echo "Post-Build Current shell is ${{ matrix.shell }}"
-        python ameba.py clean ${{ env.SOC_NAME }}
+        python ameba.py cleansoc ${{ env.SOC_NAME }}
       if: ${{ steps.build_unix.outcome == 'success' || steps.build_win.outcome == 'success' }}
