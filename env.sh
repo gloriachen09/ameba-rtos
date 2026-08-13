@@ -167,10 +167,10 @@ function download_update_prebuilts
     if [ ! -f "$PREBUILTS_ZIP_FILE" ]; then
         echo "download.... "
 
-        # Set RTK_USE_SECOND_SOURCE=1 to skip the primary mirror and download
+        # Set USE_SECOND_SOURCE=1 to skip the primary mirror and download
         # directly from the second source (e.g. GitHub Releases).
-        if [ "${RTK_USE_SECOND_SOURCE:-0}" = "1" ]; then
-            echo "RTK_USE_SECOND_SOURCE=1, downloading from $DOWNLOAD_URL_SECOND_SOURCE"
+        if [ "${USE_SECOND_SOURCE:-0}" = "1" ] || [ "${USE_SECOND_SOURCE}" = "True" ]; then
+            echo "USE_SECOND_SOURCE=1, downloading from $DOWNLOAD_URL_SECOND_SOURCE"
             curl -fL# -o "$PREBUILTS_ZIP_FILE" "$DOWNLOAD_URL_SECOND_SOURCE"
         else
             curl -fL# -o "$PREBUILTS_ZIP_FILE" "$DOWNLOAD_URL"

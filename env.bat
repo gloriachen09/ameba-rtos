@@ -82,10 +82,13 @@ if not exist "%PREBUILTS_DIR%.zip" (
 		goto end
 	)
 	echo download....
-	rem Set RTK_USE_SECOND_SOURCE=1 to skip the primary mirror and download
+	rem Set USE_SECOND_SOURCE=1 or True to skip the primary mirror and download
 	rem directly from the second source (e.g. GitHub Releases).
-	if "%RTK_USE_SECOND_SOURCE%"=="1" (
-		echo RTK_USE_SECOND_SOURCE=1, downloading from %DOWNLOAD_URL_SECOND_SOURCE%
+	set "_use_second=0"
+	if "%USE_SECOND_SOURCE%"=="1"    set "_use_second=1"
+	if "%USE_SECOND_SOURCE%"=="True" set "_use_second=1"
+	if "!_use_second!"=="1" (
+		echo USE_SECOND_SOURCE=True, downloading from %DOWNLOAD_URL_SECOND_SOURCE%
 		curl.exe -fL# -o "%PREBUILTS_DIR%.zip" "%DOWNLOAD_URL_SECOND_SOURCE%"
 	) else (
 		curl.exe -fL# -o "%PREBUILTS_DIR%.zip" "%DOWNLOAD_URL%"
