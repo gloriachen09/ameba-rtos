@@ -1,4 +1,4 @@
-PREBUILTS_VERSION=1.0.3
+PREBUILTS_VERSION=1.0.4
 PREBUILTS_WIN_URL='https://github.com/Ameba-AIoT/ameba-toolchain/releases/download/prebuilts-v1.0.3/prebuilts-win-1.0.3.zip'
 PREBUILTS_LINUX_URL='https://github.com/Ameba-AIoT/ameba-toolchain/releases/download/prebuilts-v1.0.3/prebuilts-linux-1.0.3.tar.gz'
 PREBUILTS_DARWIN_URL='https://github.com/Ameba-AIoT/ameba-toolchain/releases/download/prebuilts-v1.0.3/prebuilts-darwin-1.0.3.tar.gz'
@@ -166,19 +166,27 @@ function download_update_prebuilts
     fi
     if [ ! -f "$PREBUILTS_ZIP_FILE" ]; then
         echo "download.... "
-        curl -fL# -o "$PREBUILTS_ZIP_FILE" "$DOWNLOAD_URL"
+
+        # Set RTK_USE_SECOND_SOURCE=1 to skip the primary mirror and download
+        # directly from the second source (e.g. GitHub Releases).
+        if [ "${RTK_USE_SECOND_SOURCE:-0}" = "1" ]; then
+            echo "RTK_USE_SECOND_SOURCE=1, downloading from $DOWNLOAD_URL_SECOND_SOURCE"
+            curl -fL# -o "$PREBUILTS_ZIP_FILE" "$DOWNLOAD_URL_SECOND_SOURCE"
+        else
+            curl -fL# -o "$PREBUILTS_ZIP_FILE" "$DOWNLOAD_URL"
+            if [ $? -ne 0 ]; then
+                rm -f "$PREBUILTS_ZIP_FILE"
+                echo "Try to download from $DOWNLOAD_URL_SECOND_SOURCE"
+                curl -fL# -o "$PREBUILTS_ZIP_FILE" "$DOWNLOAD_URL_SECOND_SOURCE"
+            fi
+        fi
 
         if [ $? -ne 0 ]; then
             rm -f "$PREBUILTS_ZIP_FILE"
-            echo "Try to download from $DOWNLOAD_URL_SECOND_SOURCE"
-            curl -fL# -o "$PREBUILTS_ZIP_FILE" "$DOWNLOAD_URL_SECOND_SOURCE"
-            if [ $? -ne 0 ]; then
-                rm -f "$PREBUILTS_ZIP_FILE"
-                echo "Download failed. Please check your network, or download manually from:"
-                echo "  $DOWNLOAD_URL"
-                echo "  $DOWNLOAD_URL_SECOND_SOURCE"
-                return 1
-            fi
+            echo "Download failed. Please check your network, or download manually from:"
+            echo "  $DOWNLOAD_URL"
+            echo "  $DOWNLOAD_URL_SECOND_SOURCE"
+            return 1
         fi
     fi
 
