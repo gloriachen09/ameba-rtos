@@ -24,12 +24,12 @@ jobs:
 
           - os: windows-latest
             shell: cmd
- 
+
           - os: windows-latest
             shell: powershell
 
-          - os: macos-latest
-            shell: bash
+          # - os: macos-latest
+          #   shell: bash
 
 #          - os: windows-latest
 #            shell: bash
@@ -38,27 +38,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Platform prepare and setup
-      shell: bash
-      run: |
-        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-          sudo apt-get update -qq
-          sudo apt-get install -y cmake ninja-build jq
-          sudo ln -sf /bin/bash /bin/sh
-        elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          brew update
-          brew install cmake ninja jq wget
-        else
-          choco install cmake ninja wget jq -y --no-progress
-        fi
-
-        python -m pip install --upgrade pip
-        pip install -r tools/requirements.txt
-
     - name: Json file parser
       id: build_config
       shell: bash
-      run: |        
+      run: |
         # 检查文件是否存在
         JSON_FILE=.github/workflows/ameba_build_config.json
         if [ ! -f "$JSON_FILE" ]; then
@@ -98,30 +81,82 @@ jobs:
         echo "build_config=$BUILD_CONFIG" >> $GITHUB_OUTPUT
         echo "SOC_NAME=${{ fromJson(env.SOC_MAP_JSON)[inputs.ic_name] }}" >> $GITHUB_ENV
 
-    - name: Menuconfig
+    - name: Platform prepare, Menuconfig and Build (Unix)
+      if: ${{ matrix.os != 'windows-latest' }}
+      shell: bash
+      run: |
+        # === Setup: source env.sh 激活 venv，设置 prebuilts PATH，同进程全程有效 ===
+        export USE_SECOND_SOURCE=True
+        source env.sh
+
+        # === Menuconfig ===
+        if [ "${{ inputs.build_stage_name }}" != "B0" ]; then
+          echo "Menuconfig ${{ inputs.ic_name }} stage ${{ inputs.build_stage_name }} build config ${{ steps.build_config.outputs.build_config }}"
+          python ameba.py menuconfig ${{ env.SOC_NAME }} -f ${{ steps.build_config.outputs.build_config }}
+        fi
+
+        # === Build ===
+        python ameba.py build ${{ env.SOC_NAME }}
+
+        # === Post-Build Cleanup ===
+        python ameba.py cleansoc ${{ env.SOC_NAME }}
+
+    - name: Platform prepare and setup (Windows)
+      if: ${{ matrix.os == 'windows-latest' }}
+      shell: bash
+      run: |
+        # call env.bat: 下载 prebuilts、创建 venv、pip install requirements
+        export USE_SECOND_SOURCE=True
+        cmd /c env.bat
+
+        # 激活 venv，后续所有 python 操作都在 venv 内
+        source .venv/Scripts/activate
+
+        # prebuilts 提供 cmake/make/wget 等工具，不包含 python（python 用 venv 的）
+        PREBUILTS_VERSION=$(grep -m1 'PREBUILTS_VERSION=' env.bat | sed 's/.*PREBUILTS_VERSION=\(.*\)/\1/' | tr -d '"\r')
+        PREBUILTS_DIR="C:/rtk-toolchain/prebuilts-win-${PREBUILTS_VERSION}"
+        echo "${PREBUILTS_DIR}/bin" >> "$GITHUB_PATH"
+        echo "${PREBUILTS_DIR}/cmake/bin" >> "$GITHUB_PATH"
+        echo "${PREBUILTS_DIR}/make" >> "$GITHUB_PATH"
+        echo "${PREBUILTS_DIR}/winpty" >> "$GITHUB_PATH"
+        echo "${GITHUB_WORKSPACE}/.venv/Scripts" >> "$GITHUB_PATH"
+        echo "VIRTUAL_ENV=${GITHUB_WORKSPACE}/.venv" >> "$GITHUB_ENV"
+        echo "PYTHONNOUSERSITE=True" >> "$GITHUB_ENV"
+
+        # pywin32 pip install 后需要手动执行 post-install 脚本注册 DLL，否则 win32api import 失败
+        python .venv/Scripts/pywin32_postinstall.py -install || true
+
+    - name: Menuconfig (Windows)
+      if: ${{ matrix.os == 'windows-latest' && inputs.build_stage_name != 'B0' }}
+      shell: bash
       run: |
         echo "Menuconfig Current shell is ${{ matrix.shell }}"
         echo "${{ inputs.ic_name }} stage ${{ inputs.build_stage_name }} build config ${{ steps.build_config.outputs.build_config }}"
+        if [ "${{ matrix.shell }}" == "cmd" ]; then
+          cmd /c "python ameba.py menuconfig ${{ env.SOC_NAME }} -f ${{ steps.build_config.outputs.build_config }}"
+        else
+          powershell -Command "python ameba.py menuconfig ${{ env.SOC_NAME }} -f ${{ steps.build_config.outputs.build_config }}"
+        fi
 
-        python ameba.py menuconfig ${{ env.SOC_NAME }} -f ${{ steps.build_config.outputs.build_config }}
-      if: ${{ inputs.build_stage_name != 'B0' }}
-
-    - name: Build
-      id: build_unix
+    - name: Build (Windows)
+      id: build_win
+      if: ${{ matrix.os == 'windows-latest' }}
+      shell: bash
       run: |
         echo "Build Current shell is ${{ matrix.shell }}"
-        python ameba.py build ${{ env.SOC_NAME }} -D USE_SECOND_SOURCE=True
-      if: ${{ matrix.os != 'windows-latest' }}
+        if [ "${{ matrix.shell }}" == "cmd" ]; then
+          cmd /c "python ameba.py build ${{ env.SOC_NAME }}"
+        else
+          powershell -Command "python ameba.py build ${{ env.SOC_NAME }}"
+        fi
 
-    - name: Build_windows
-      id: build_win
-      run: |
-          echo "Build Current shell is ${{ matrix.shell }}"
-          python ameba.py build ${{ env.SOC_NAME }} -D USE_SECOND_SOURCE=True
-      if: ${{ inputs.ic_name != 'amebasmart' && matrix.os == 'windows-latest' }}
-
-    - name: Post-Build Cleanup
+    - name: Post-Build Cleanup (Windows)
+      if: ${{ steps.build_win.outcome == 'success' }}
+      shell: bash
       run: |
         echo "Post-Build Current shell is ${{ matrix.shell }}"
-        python ameba.py clean ${{ env.SOC_NAME }}
-      if: ${{ steps.build_unix.outcome == 'success' || steps.build_win.outcome == 'success' }}
+        if [ "${{ matrix.shell }}" == "cmd" ]; then
+          cmd /c "python ameba.py cleansoc ${{ env.SOC_NAME }}"
+        else
+          powershell -Command "python ameba.py cleansoc ${{ env.SOC_NAME }}"
+        fi
