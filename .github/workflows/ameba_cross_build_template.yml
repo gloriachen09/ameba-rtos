@@ -42,18 +42,15 @@ jobs:
       shell: bash
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-          sudo apt-get update -qq
-          sudo apt-get install -y cmake ninja-build jq
-          sudo ln -sf /bin/bash /bin/sh
+          export RTK_USE_SECOND_SOURCE=1
+          source env.sh
         elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          brew update
-          brew install cmake ninja jq wget
+          export RTK_USE_SECOND_SOURCE=1
+          source env.sh
         else
-          choco install cmake ninja wget jq -y --no-progress
+          set RTK_USE_SECOND_SOURCE=1
+          env.bat
         fi
-
-        python -m pip install --upgrade pip
-        pip install -r tools/requirements.txt
 
     - name: Json file parser
       id: build_config
@@ -103,25 +100,25 @@ jobs:
         echo "Menuconfig Current shell is ${{ matrix.shell }}"
         echo "${{ inputs.ic_name }} stage ${{ inputs.build_stage_name }} build config ${{ steps.build_config.outputs.build_config }}"
 
-        python ameba.py menuconfig ${{ env.SOC_NAME }} -f ${{ steps.build_config.outputs.build_config }}
+        ameba.py menuconfig ${{ env.SOC_NAME }} -f ${{ steps.build_config.outputs.build_config }}
       if: ${{ inputs.build_stage_name != 'B0' }}
 
     - name: Build
       id: build_unix
       run: |
         echo "Build Current shell is ${{ matrix.shell }}"
-        python ameba.py build ${{ env.SOC_NAME }} -D USE_SECOND_SOURCE=True
+        ameba.py build ${{ env.SOC_NAME }} -D USE_SECOND_SOURCE=True
       if: ${{ matrix.os != 'windows-latest' }}
 
     - name: Build_windows
       id: build_win
       run: |
           echo "Build Current shell is ${{ matrix.shell }}"
-          python ameba.py build ${{ env.SOC_NAME }} -D USE_SECOND_SOURCE=True
+          ameba.py build ${{ env.SOC_NAME }} -D USE_SECOND_SOURCE=True
       if: ${{ inputs.ic_name != 'amebasmart' && matrix.os == 'windows-latest' }}
 
     - name: Post-Build Cleanup
       run: |
         echo "Post-Build Current shell is ${{ matrix.shell }}"
-        python ameba.py clean ${{ env.SOC_NAME }}
+        ameba.py cleansoc ${{ env.SOC_NAME }}
       if: ${{ steps.build_unix.outcome == 'success' || steps.build_win.outcome == 'success' }}
