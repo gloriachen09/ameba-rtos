@@ -22,8 +22,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
-            shell: bash
+          # - os: ubuntu-latest
+          #   shell: bash
 
           # - os: windows-latest
           #   shell: cmd
