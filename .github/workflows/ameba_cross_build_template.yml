@@ -1,4 +1,4 @@
-name: Unified Cross Platform and Shell Build Template
+name: Unified Cross Platform and Shell Build Check
 
 on:
   workflow_call:
